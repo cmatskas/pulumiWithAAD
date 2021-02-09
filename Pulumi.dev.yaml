@@ -1,0 +1,10 @@
+secretsprovider: azurekeyvault://<keyVaultName>.vault.azure.net/keys/pulumiKey
+encryptedkey: <redacted>
+config:
+  azure:environment: public
+  azure:location: WestUS
+  pulumiwithaad:data:
+    azurerm_key_vault:
+      id: /subscriptions/d8011108-0000-0000-0000-1f3f77abe795/resourceGroups/<ResourceGroupName>/providers/Microsoft.KeyVault/vaults/<KeyVaultName>
+  pulumiwithaad:someOtherSecret:
+    secure: v1:6oxy0000Daemg43V:fV6Oy11srn0000lRVwsPb5x0000/y6Q
