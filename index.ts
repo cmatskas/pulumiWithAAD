@@ -1,38 +1,38 @@
 import * as pulumi from "@pulumi/pulumi";
-import * as azure from "@pulumi/azure";
+import * as azure from "@pulumi/azure-native";
 
-interface Data{
-    azurerm_key_vault: {
-        id:string
-    }
-};
+let sqladmin:string|undefined;
+let sqlpassword: string|undefined;
 
-let config = new pulumi.Config();
-let data = config.requireObject<Data>("data");
-
-const sql_username_secret = azure.keyvault.getSecret({
-    name: "pulumi-sql-username",
-    keyVaultId: data.azurerm_key_vault.id
+azure.keyvault.getSecret({
+        resourceGroupName: "identity",
+        vaultName: "cm-identity-kv",
+        secretName: "sqlAdministratorLogin"
+}).then(secret => {
+    sqladmin = secret.properties.value;
 });
 
-const sql_password_secret = azure.keyvault.getSecret({
-    name: "pulumi-sql-password",
-    keyVaultId: data.azurerm_key_vault.id
+azure.keyvault.getSecret({
+    resourceGroupName: "identity",
+    vaultName: "cm-identity-kv",
+    secretName: "sqlAdministratorLoginPassword"
+}).then(secret => {
+    sqlpassword = secret.properties.value;
 });
 
-export const sql_username = sql_username_secret.then(secret => secret.value);
-export const sql_password = sql_password_secret.then(secret => secret.value);
-export const kvSecret = config.requireSecret("someOtherSecret");
 
-const resourceGroup = new azure.core.ResourceGroup("pulumi-demo", {location: "West US"});
+pulumi.log.info(sqladmin!);
+pulumi.log.info(sqlpassword!);
 
-const exampleSqlServer = new azure.sql.SqlServer("cm-pl-sql-server", {
+const resourceGroup = new azure.resources.ResourceGroup("resource-group", {
+    location: "West US",
+    resourceGroupName: "pulumi-demo"    
+});
+
+const sqlServer = new azure.sql.Server("sql-server", {
     resourceGroupName: resourceGroup.name,
     location: resourceGroup.location,
-    version: "12.0",
-    administratorLogin: sql_username,
-    administratorLoginPassword: kvSecret, //administratorLoginPassword: sql_password,
-    tags: {
-        environment: "demo",
-    },
+    administratorLogin: sqladmin,
+    administratorLoginPassword: sqlpassword,
+    version: "12.0"
 });
