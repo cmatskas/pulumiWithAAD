@@ -1,10 +1,13 @@
-secretsprovider: azurekeyvault://<keyVaultName>.vault.azure.net/keys/pulumiKey
-encryptedkey: <redacted>
+secretsprovider: azurekeyvault://cm-identity-kv.vault.azure.net/keys/pulumikey
+encryptedkey: U3RmckZiSklSbVJkS09WakkxQ3VDZGVQOHBTUnlSd0s2b1JUaGlDMjNJTW9JUmRiMkpHWlNuSVJuZmJqRXF4bURBRjJ2TWZoeUEzYkdzUUZZaGk3clE0T2tWakhPV0RYZk5HWmdGVTRvN3BGZTEwWHJBaXUtUUpxazhsd0pyc0JmNndlSDBDa3dJU1JHODdPeXFxX0xIY28zV1R0TjBBY045TFdPWFc3WjJEZ29CdWtPSkpaZ05wM3YtcVV0bEkzWDVzaHdjVkpnRnRHRVE4YWhucGJvVDRDYjQ0cjhIcE9LbHdMMW5rbVZqSHVuQjhUVzhBeU1wc3RxZFBqeTRLeXlaVW5RYldRaGNCX1VTMjZDWTNUS1E0NDJaSVlROUsyb0kwTFBzSnNzWkt3bk8ycDI2RFlobXZtVWJrY1VXQlNsWTBOWnNaNnhMeUlGVVp6LXVNZWdn
 config:
+  azure:clientId: dafc5200-9618-4c6c-a48b-98735c31304a
+  azure:clientSecret:
+    secure: v1:CgEyIFYrpo5q15UR:rAVrVh4SAi36VAu3IxT8161dj0sQSmstCImkQXcMRsgtrfOdqyOBojl6FDXlp3BUadY=
   azure:environment: public
   azure:location: WestUS
+  azure:subscriptionId: e42acc2d-8462-4fb5-bf0d-d983c0017584
+  azure:tenantId: 72f988bf-86f1-41af-91ab-2d7cd011db47
   pulumiwithaad:data:
     azurerm_key_vault:
-      id: /subscriptions/d8011108-0000-0000-0000-1f3f77abe795/resourceGroups/<ResourceGroupName>/providers/Microsoft.KeyVault/vaults/<KeyVaultName>
-  pulumiwithaad:someOtherSecret:
-    secure: v1:6oxy0000Daemg43V:fV6Oy11srn0000lRVwsPb5x0000/y6Q
+      id: /subscriptions/e42acc2d-8462-4fb5-bf0d-d983c0017584/resourceGroups/identity/providers/Microsoft.KeyVault/vaults/cm-identity-kv

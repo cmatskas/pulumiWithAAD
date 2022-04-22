@@ -11,18 +11,17 @@ let config = new pulumi.Config();
 let data = config.requireObject<Data>("data");
 
 const sql_username_secret = azure.keyvault.getSecret({
-    name: "pulumi-sql-username",
+    name: "sqlAdministratorLogin",
     keyVaultId: data.azurerm_key_vault.id
 });
 
 const sql_password_secret = azure.keyvault.getSecret({
-    name: "pulumi-sql-password",
+    name: "sqlAdministratorLoginPassword",
     keyVaultId: data.azurerm_key_vault.id
 });
 
 export const sql_username = sql_username_secret.then(secret => secret.value);
 export const sql_password = sql_password_secret.then(secret => secret.value);
-export const kvSecret = config.requireSecret("someOtherSecret");
 
 const resourceGroup = new azure.core.ResourceGroup("pulumi-demo", {location: "West US"});
 
@@ -31,7 +30,7 @@ const exampleSqlServer = new azure.sql.SqlServer("cm-pl-sql-server", {
     location: resourceGroup.location,
     version: "12.0",
     administratorLogin: sql_username,
-    administratorLoginPassword: kvSecret, //administratorLoginPassword: sql_password,
+    administratorLoginPassword: sql_password,
     tags: {
         environment: "demo",
     },
