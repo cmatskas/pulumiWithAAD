@@ -1,28 +1,31 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as azure from "@pulumi/azure-native";
+import * as identity from "@azure/identity";
+import * as keyvault from "@azure/keyvault-secrets";
 
 let sqladmin:string|undefined;
 let sqlpassword: string|undefined;
 
-azure.keyvault.getSecret({
-        resourceGroupName: "identity",
-        vaultName: "cm-identity-kv",
-        secretName: "sqlAdministratorLogin"
-}).then(secret => {
-    sqladmin = secret.properties.value;
-});
+const credential = new identity.ClientSecretCredential(
+    process.env.ARM_TENANT_ID!,
+    process.env.ARM_CLIENT_ID!,
+    process.env.ARM_CLIENT_SECRET!
+)
 
-azure.keyvault.getSecret({
-    resourceGroupName: "identity",
-    vaultName: "cm-identity-kv",
-    secretName: "sqlAdministratorLoginPassword"
-}).then(secret => {
-    sqlpassword = secret.properties.value;
-});
+console.log(credential)
 
+const client = new keyvault.SecretClient(
+    "https://cm-identity-kv.vault.azure.net",
+    credential
+);
 
-pulumi.log.info(sqladmin!);
-pulumi.log.info(sqlpassword!);
+client.getSecret("sqlAdministratorLogin")
+    .then(secret => sqladmin = secret.value);
+
+client.getSecret("sqlAdministratorLoginPassword")
+    .then(secret => sqlpassword = secret.value);
+
+console.log(sqladmin);
 
 const resourceGroup = new azure.resources.ResourceGroup("resource-group", {
     location: "West US",
